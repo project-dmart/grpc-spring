@@ -1,0 +1,44 @@
+plugins {
+    id "java"
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+
+}
+
+subprojects {
+    apply plugin: 'java'
+    apply plugin: 'idea'
+
+    group = 'dev.idion'
+    version = '0.1.0'
+    sourceCompatibility = '11'
+
+    repositories {
+        mavenCentral()
+    }
+
+    dependencies {
+        testCompile group: 'junit', name: 'junit', version: '4.12'
+    }
+
+    test {
+        useJUnitPlatform()
+    }
+}
+
+project(':server1') {
+    dependencies {
+        implementation project(':grpc-common')
+    }
+}
+
+project(':server2') {
+    dependencies {
+        implementation project(':grpc-common')
+    }
+}
