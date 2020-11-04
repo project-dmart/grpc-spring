@@ -1,12 +1,14 @@
 package dev.idion.server2;
 
-import java.net.URI;
+import dev.idion.grpc.HelloRequest;
+import dev.idion.grpc.HelloResponse;
+import dev.idion.grpc.HelloServiceGrpc;
+import io.grpc.ManagedChannel;
+import io.grpc.ManagedChannelBuilder;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.client.RestTemplate;
 
 @SpringBootApplication
 @RestController
@@ -14,10 +16,20 @@ public class Server2Application {
 
 	@GetMapping("/hi")
 	public String hi() {
-		final RestTemplate restTemplate = new RestTemplate();
-		final ResponseEntity<String> entity = restTemplate
-				.getForEntity(URI.create("http://localhost:8080/hello"), String.class);
-		return "server1: " + entity.getBody();
+		ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 8080).usePlaintext()
+				.build();
+
+		HelloServiceGrpc.HelloServiceBlockingStub stub = HelloServiceGrpc.newBlockingStub(channel);
+
+		HelloResponse helloResponse = stub.hello(HelloRequest.newBuilder()
+				.setFirstName("김")
+				.setLastName("선동")
+				.setAge(26)
+				.build());
+
+		channel.shutdown();
+
+		return helloResponse.getGreeting();
 	}
 
 	public static void main(String[] args) {
