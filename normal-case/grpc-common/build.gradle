@@ -15,6 +15,7 @@ apply plugin: 'com.google.protobuf'
 
 group 'dev.idion'
 version '0.1.0'
+sourceCompatibility = '11'
 
 repositories {
     mavenCentral()
